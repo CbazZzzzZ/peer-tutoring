@@ -1,0 +1,26 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-8.4.2, pluggy-1.7.0 -- C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1112-737-0_26.1112.737.0_x64__3k8sg7r9htsxt\dependencies\python\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\cbazz\.codex\.chatgpt-projects\g-p-6acd06b10f8881919627bdd0d1adde04\output\peer_tutoring\modelo_funcional
+collecting ... collected 17 items
+
+tests/test_api.py::test_student_crud_and_normalized_email PASSED         [  5%]
+tests/test_api.py::test_duplicate_and_validation PASSED                  [ 11%]
+tests/test_api.py::test_create_session_and_atomic_status PASSED          [ 17%]
+tests/test_api.py::test_not_qualified_and_no_partial_write PASSED        [ 23%]
+tests/test_api.py::test_availability_and_interval PASSED                 [ 29%]
+tests/test_api.py::test_overlap_and_contiguous PASSED                    [ 35%]
+tests/test_api.py::test_student_overlap_other_tutor_and_self PASSED      [ 41%]
+tests/test_api.py::test_cross_role_overlap PASSED                        [ 47%]
+tests/test_api.py::test_complete_future_cancel_and_terminal PASSED       [ 52%]
+tests/test_api.py::test_feedback_state_range_unique_and_crud PASSED      [ 58%]
+tests/test_api.py::test_dependency_deletion_and_invalidating_changes PASSED [ 64%]
+tests/test_api.py::test_reports_boundaries_and_null PASSED               [ 70%]
+tests/test_api.py::test_remaining_resource_crud PASSED                   [ 76%]
+tests/test_api.py::test_concurrent_booking PASSED                        [ 82%]
+tests/test_api.py::test_ui_docs_and_spec PASSED                          [ 88%]
+tests/test_api.py::test_reports_with_10000_sessions PASSED               [ 94%]
+tests/test_api.py::test_forced_failure_rolls_back PASSED                 [100%]
+
+- generated xml file: C:\Users\cbazz\.codex\.chatgpt-projects\g-p-6acd06b10f8881919627bdd0d1adde04\output\peer_tutoring\modelo_funcional\docs\junit_sqlite.xml -
+============================= 17 passed in 7.91s ==============================

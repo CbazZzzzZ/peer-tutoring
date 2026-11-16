@@ -1,0 +1,31 @@
+{
+  "engine": "postgresql",
+  "sessions": 10000,
+  "evaluations": 10000,
+  "samples_per_report": 5,
+  "measurements": {
+    "demanda": {
+      "seconds": [
+        0.007360716999983197,
+        0.0046789459999843075,
+        0.004625337999982548,
+        0.0039249229999995805,
+        0.003988332000005812
+      ],
+      "max_seconds": 0.007360716999983197,
+      "mean_seconds": 0.004915651199991089
+    },
+    "desempeno": {
+      "seconds": [
+        0.015623941000001196,
+        0.019604264999998122,
+        0.025430623000005426,
+        0.013699243000019123,
+        0.016471064999990404
+      ],
+      "max_seconds": 0.025430623000005426,
+      "mean_seconds": 0.018165827400002853
+    }
+  },
+  "scope": "Flask test client, complete request and JSON, isolated synthetic database; not a load/concurrent-users benchmark"
+}

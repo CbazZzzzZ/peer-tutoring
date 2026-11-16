@@ -1,0 +1,21 @@
+{
+  "fecha": "2026-11-11T01:55:58.984Z",
+  "url": "http://127.0.0.1:5055",
+  "browser": "Microsoft Edge headless",
+  "checks": [
+    "Inicio carga los indicadores y la agenda.",
+    "Crear y editar estudiante desde GUI; persiste al recargar.",
+    "Correo duplicado muestra error y conserva el formulario.",
+    "Eliminar estudiante aislado desde GUI.",
+    "Pantalla Tutores cargada.",
+    "Pantalla Cursos cargada.",
+    "Pantalla Habilitaciones cargada.",
+    "Pantalla Disponibilidad cargada.",
+    "Pantalla Solicitudes cargada.",
+    "Pantalla Sesiones cargada.",
+    "Pantalla Evaluaciones cargada.",
+    "Reportes consultan y muestran demanda y desempeño.",
+    "Ancho móvil 375 px sin desbordamiento de página."
+  ],
+  "errors": []
+}

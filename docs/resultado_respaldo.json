@@ -1,0 +1,38 @@
+{
+  "integrity_check": "ok",
+  "foreign_key_check": [],
+  "counts_original_restored": {
+    "estudiante": [
+      4,
+      4
+    ],
+    "curso": [
+      3,
+      3
+    ],
+    "tutor": [
+      2,
+      2
+    ],
+    "solicitud_tutoria": [
+      5,
+      5
+    ],
+    "calificacion": [
+      6,
+      6
+    ],
+    "disponibilidad": [
+      28,
+      28
+    ],
+    "sesion_tutoria": [
+      4,
+      4
+    ],
+    "retroalimentacion": [
+      2,
+      2
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+.env
+.venv/
+.venv-local/
+.packages/
+.test-packages/
+.test-runs/
+server.*
+docs/Especificacion_Diseno_2de2.pdf
+docs/Peer_Tutoring_Informe_Funcional.pdf
+.uv-cache/
+INICIAR_EN_ESTE_EQUIPO.ps1
+__pycache__/
+.pytest_cache/
+*.db
+instance/
+*.pyc

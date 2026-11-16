@@ -1,0 +1,1593 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Peer Tutoring API",
+    "version": "1.0.0",
+    "description": "Prototipo local de operador. Sin autenticación. Los estados se controlan mediante sesiones; consultar README para transiciones y restricciones."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5055"
+    }
+  ],
+  "paths": {
+    "/api/v1/estudiantes": {
+      "get": {
+        "summary": "Listar estudiantes",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear estudiantes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "nombre": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "correo": {
+                    "type": "string",
+                    "maxLength": 254
+                  },
+                  "carrera": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "anio_ingreso": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "nombre",
+                  "correo",
+                  "carrera",
+                  "anio_ingreso"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/estudiantes/{id_estudiante}": {
+      "parameters": [
+        {
+          "name": "id_estudiante",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "readOnly": true
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar registro",
+        "responses": {
+          "200": {
+            "description": "Registro"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar registro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "nombre": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "correo": {
+                    "type": "string",
+                    "maxLength": 254
+                  },
+                  "carrera": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "anio_ingreso": {
+                    "type": "integer"
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar sin dependencias y si el estado lo permite",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/tutores": {
+      "get": {
+        "summary": "Listar tutores",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear tutores",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_estudiante": {
+                    "type": "integer"
+                  },
+                  "promedio": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id_estudiante",
+                  "promedio"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/tutores/{id_tutor}": {
+      "parameters": [
+        {
+          "name": "id_tutor",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "readOnly": true
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar registro",
+        "responses": {
+          "200": {
+            "description": "Registro"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar registro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_estudiante": {
+                    "type": "integer"
+                  },
+                  "promedio": {
+                    "type": "number"
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar sin dependencias y si el estado lo permite",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/cursos": {
+      "get": {
+        "summary": "Listar cursos",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear cursos",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "codigo_curso": {
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "nombre_curso": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "departamento": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "creditos": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "codigo_curso",
+                  "nombre_curso",
+                  "departamento",
+                  "creditos"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/cursos/{codigo_curso}": {
+      "parameters": [
+        {
+          "name": "codigo_curso",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 20
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar registro",
+        "responses": {
+          "200": {
+            "description": "Registro"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar registro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "nombre_curso": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "departamento": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "creditos": {
+                    "type": "integer"
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar sin dependencias y si el estado lo permite",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/calificaciones": {
+      "get": {
+        "summary": "Listar calificaciones",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear calificaciones",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_tutor": {
+                    "type": "integer"
+                  },
+                  "codigo_curso": {
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "fecha_certificacion": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "id_tutor",
+                  "codigo_curso",
+                  "fecha_certificacion"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/calificaciones/{id_tutor}/{codigo_curso}": {
+      "parameters": [
+        {
+          "name": "id_tutor",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "codigo_curso",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 20
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar registro",
+        "responses": {
+          "200": {
+            "description": "Registro"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar registro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "fecha_certificacion": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar sin dependencias y si el estado lo permite",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/disponibilidades": {
+      "get": {
+        "summary": "Listar disponibilidades",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear disponibilidades",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_tutor": {
+                    "type": "integer"
+                  },
+                  "inicio": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "id_tutor",
+                  "inicio",
+                  "fin"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/disponibilidades/{id_disponibilidad}": {
+      "parameters": [
+        {
+          "name": "id_disponibilidad",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "readOnly": true
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar registro",
+        "responses": {
+          "200": {
+            "description": "Registro"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar registro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_tutor": {
+                    "type": "integer"
+                  },
+                  "inicio": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar sin dependencias y si el estado lo permite",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/solicitudes": {
+      "get": {
+        "summary": "Listar solicitudes",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear solicitudes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_estudiante": {
+                    "type": "integer"
+                  },
+                  "codigo_curso": {
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "tema": {
+                    "type": "string",
+                    "maxLength": 250
+                  },
+                  "estado": {
+                    "type": "string",
+                    "maxLength": 12
+                  }
+                },
+                "required": [
+                  "id_estudiante",
+                  "codigo_curso",
+                  "tema"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/solicitudes/{id_solicitud}": {
+      "parameters": [
+        {
+          "name": "id_solicitud",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "readOnly": true
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar registro",
+        "responses": {
+          "200": {
+            "description": "Registro"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar registro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_estudiante": {
+                    "type": "integer"
+                  },
+                  "codigo_curso": {
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "tema": {
+                    "type": "string",
+                    "maxLength": 250
+                  },
+                  "estado": {
+                    "type": "string",
+                    "maxLength": 12
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar sin dependencias y si el estado lo permite",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/sesiones": {
+      "get": {
+        "summary": "Listar sesiones",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear sesiones",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_solicitud": {
+                    "type": "integer"
+                  },
+                  "id_tutor": {
+                    "type": "integer"
+                  },
+                  "inicio": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fin": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "lugar": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "estado": {
+                    "type": "string",
+                    "maxLength": 12
+                  }
+                },
+                "required": [
+                  "id_solicitud",
+                  "id_tutor",
+                  "inicio",
+                  "fin",
+                  "lugar"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/sesiones/{id_sesion}": {
+      "parameters": [
+        {
+          "name": "id_sesion",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "readOnly": true
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar registro",
+        "responses": {
+          "200": {
+            "description": "Registro"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar registro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_solicitud": {
+                    "type": "integer"
+                  },
+                  "id_tutor": {
+                    "type": "integer"
+                  },
+                  "inicio": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fin": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "lugar": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "estado": {
+                    "type": "string",
+                    "maxLength": 12
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar sin dependencias y si el estado lo permite",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/retroalimentaciones": {
+      "get": {
+        "summary": "Listar retroalimentaciones",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista paginada"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear retroalimentaciones",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_sesion": {
+                    "type": "integer"
+                  },
+                  "calificacion": {
+                    "type": "integer"
+                  },
+                  "comentarios": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "id_sesion",
+                  "calificacion"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/retroalimentaciones/{id_feedback}": {
+      "parameters": [
+        {
+          "name": "id_feedback",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "readOnly": true
+          }
+        }
+      ],
+      "get": {
+        "summary": "Consultar registro",
+        "responses": {
+          "200": {
+            "description": "Registro"
+          },
+          "404": {
+            "description": "No encontrado"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar registro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_sesion": {
+                    "type": "integer"
+                  },
+                  "calificacion": {
+                    "type": "integer"
+                  },
+                  "comentarios": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actualizado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar sin dependencias y si el estado lo permite",
+        "responses": {
+          "204": {
+            "description": "Eliminado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Duplicado, dependencia o regla de negocio"
+          }
+        }
+      }
+    },
+    "/api/v1/reportes/demanda": {
+      "get": {
+        "summary": "Reporte de demanda",
+        "parameters": [
+          {
+            "name": "desde",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "items con resultados; desde inclusivo, hasta exclusivo"
+          },
+          "400": {
+            "description": "Periodo inválido"
+          }
+        }
+      }
+    },
+    "/api/v1/reportes/desempeno": {
+      "get": {
+        "summary": "Reporte de desempeno",
+        "parameters": [
+          {
+            "name": "desde",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "items con resultados; desde inclusivo, hasta exclusivo"
+          },
+          "400": {
+            "description": "Periodo inválido"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "estudiantes": {
+        "type": "object",
+        "properties": {
+          "id_estudiante": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "nombre": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "correo": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "carrera": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "anio_ingreso": {
+            "type": "integer"
+          }
+        }
+      },
+      "tutores": {
+        "type": "object",
+        "properties": {
+          "id_tutor": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "id_estudiante": {
+            "type": "integer"
+          },
+          "promedio": {
+            "type": "number"
+          }
+        }
+      },
+      "cursos": {
+        "type": "object",
+        "properties": {
+          "codigo_curso": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "nombre_curso": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "departamento": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "creditos": {
+            "type": "integer"
+          }
+        }
+      },
+      "calificaciones": {
+        "type": "object",
+        "properties": {
+          "id_tutor": {
+            "type": "integer"
+          },
+          "codigo_curso": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "fecha_certificacion": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "disponibilidades": {
+        "type": "object",
+        "properties": {
+          "id_disponibilidad": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "id_tutor": {
+            "type": "integer"
+          },
+          "inicio": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fin": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "solicitudes": {
+        "type": "object",
+        "properties": {
+          "id_solicitud": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "id_estudiante": {
+            "type": "integer"
+          },
+          "codigo_curso": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "fecha_solicitud": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "tema": {
+            "type": "string",
+            "maxLength": 250
+          },
+          "estado": {
+            "type": "string",
+            "maxLength": 12
+          }
+        }
+      },
+      "sesiones": {
+        "type": "object",
+        "properties": {
+          "id_sesion": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "id_solicitud": {
+            "type": "integer"
+          },
+          "id_tutor": {
+            "type": "integer"
+          },
+          "inicio": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fin": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lugar": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "estado": {
+            "type": "string",
+            "maxLength": 12
+          }
+        }
+      },
+      "retroalimentaciones": {
+        "type": "object",
+        "properties": {
+          "id_feedback": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "id_sesion": {
+            "type": "integer"
+          },
+          "calificacion": {
+            "type": "integer"
+          },
+          "comentarios": {
+            "type": "string",
+            "nullable": true
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        }
+      }
+    }
+  }
+}

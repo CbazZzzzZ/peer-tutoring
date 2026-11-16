@@ -1,0 +1,10 @@
+{
+  "fecha": "2026-11-11T02:00:43.211Z",
+  "checks": [
+    "Solicitud creada desde la GUI.",
+    "Sesión programada desde la GUI.",
+    "Solicitud pasa a asignada y persiste.",
+    "La GUI muestra el rechazo de completar una sesión futura.",
+    "Borrar sesión devuelve la solicitud a pendiente."
+  ]
+}
