@@ -1,10 +1,10 @@
-# Peer Tutoring · Modelo funcional
+# Peer Tutoring · Entrega final
 
 Proyecto académico de Oscar Sebastian Pinchao Hidalgo, Bases de Datos, Yachay Tech.
 
-Aplicación Flask + Flask-SQLAlchemy con ocho tablas, API JSON, interfaz web y dos reportes. La versión del avance del 16 de noviembre de 2026 funciona con **PostgreSQL 17.12 en Docker** y conserva SQLite como alternativa local.
+Aplicación Flask + Flask-SQLAlchemy con ocho tablas, API JSON, interfaz web y dos reportes. La versión final del 21 de noviembre de 2026 funciona con **PostgreSQL 17.12 en Docker** y conserva SQLite como alternativa local.
 
-## Inicio recomendado para presentar el avance
+## Inicio recomendado para presentar el proyecto
 
 1. Abrir Docker Desktop y esperar a que el motor esté listo.
 2. Abrir `INICIAR_DOCKER.bat` desde la carpeta del proyecto.
@@ -12,7 +12,7 @@ Aplicación Flask + Flask-SQLAlchemy con ocho tablas, API JSON, interfaz web y d
 
 La primera ejecución construye la aplicación y descarga las imágenes. Los datos ficticios se cargan una sola vez. Las siguientes ejecuciones conservan los registros en el volumen `peer_data`.
 
-**Evidencia actual:** 17 pruebas aprobadas en PostgreSQL y 17 en SQLite; reportes medidos con 10 000 sesiones y 10 000 evaluaciones; copia PostgreSQL restaurada y comparada campo por campo. Ver `docs/VALIDACION_16NOV.md` y el PDF `docs/Peer_Tutoring_Avance_16nov2026.pdf`.
+**Evidencia actual:** 19 pruebas aprobadas en PostgreSQL y 19 en SQLite; reportes medidos con 10 000 sesiones y 10 000 evaluaciones; copia PostgreSQL restaurada y comparada campo por campo. Ver `docs/VALIDACION_FINAL.md` y el PDF `docs/Peer_Tutoring_Proyecto_Final.pdf`.
 
 Repositorio privado: https://github.com/CbazZzzzZ/peer-tutoring
 
@@ -79,7 +79,7 @@ El validador revisa la agenda completa para favorecer claridad y consistencia en
 
 Las pruebas crean bases SQLite temporales; no borran la base de demostración. Para PostgreSQL, usar una base separada llamada exactamente `peer_tutoring_test` y definir TEST_DATABASE_URL. El informe de ejecución indica el motor realmente probado.
 
-## PostgreSQL en Docker (opcional)
+## PostgreSQL en Docker (inicio manual)
 
 ```powershell
 docker compose up -d --build
@@ -98,10 +98,26 @@ Abrir http://127.0.0.1:5055. Detener primero el servidor local si ocupa el puert
 - `manage.py`: creación, carga ficticia y exportación del esquema.
 - `docs`: SQL, documentación API y evidencia de pruebas.
 
-El repositorio excluye `.env`, bases de datos, entornos y dependencias descargadas. El PDF del 16 de noviembre integra el diseño conceptual y lógico, la implementación y la evidencia actual. Los resultados de interfaz del 10 de noviembre se conservan con su fecha original; las capturas 05 y 06 corresponden a PostgreSQL el 16 de noviembre.
+El repositorio excluye `.env`, bases de datos, entornos y dependencias descargadas. El PDF final integra el diseño conceptual y lógico, la implementación y la evidencia actual. Los resultados de interfaz del 10 de noviembre se conservan con su fecha original; las capturas 07 a 09 corresponden a la revisión final del 21 de noviembre.
 
 ## Alcance y límites
 
 Prototipo local para un operador académico, sin autenticación ni cuentas de estudiantes. Usar datos ficticios y no exponerlo a Internet. Las pruebas no acreditan validación institucional. La contraseña de Docker es de demostración; la configuración permite reemplazarla mediante `.env`.
 
 Se utilizó asistencia de IA para el código, documentación y pruebas. El integrante debe comprender y revisar el proyecto antes de presentarlo.
+
+## Material para la defensa
+
+- `docs/Peer_Tutoring_Proyecto_Final.pdf`: informe final de 18 páginas.
+- `docs/Peer_Tutoring_Guion_Detallado.pdf`: explicación por página, construcción, código, demostración y preguntas.
+- `docs/VALIDACION_FINAL.md`: evidencia del 21/11/2026.
+- `docs/junit_postgresql_final.xml` y `docs/junit_sqlite_final.xml`: 19 escenarios por motor.
+- `docs/validacion_gui_final.json`: comprobaciones de navegador, separadas de las pruebas de API.
+
+Filtros de historial visibles: estudiante, tutor, curso, estado y periodo según recurso.
+El botón Programar de una solicitud pendiente abre la sesión con esa solicitud seleccionada.
+Los selectores excluyen tutores no habilitados para el curso y sesiones no evaluables.
+Disponibilidad, cruces y conflictos simultáneos siempre se validan en la API al guardar.
+
+La base local existente conserva las acciones ficticias de demostración. En una instalación nueva,
+`seed` crea sus propias fechas relativas; los identificadores y conteos pueden diferir de las capturas.

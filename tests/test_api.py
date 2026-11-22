@@ -219,3 +219,22 @@ def test_forced_failure_rolls_back(client,setup,monkeypatch):
     post(client,'sesiones',setup['body'],409)
     assert client.get('/api/v1/sesiones').json['total']==0
     assert client.get('/api/v1/solicitudes/1').json['estado']=='pendiente'
+
+
+def test_cancelled_session_preserves_qualification(client,setup):
+    s=post(client,'sesiones',setup['body'])
+    assert client.patch('/api/v1/sesiones/'+str(s['id_sesion']),json={'estado':'cancelada'}).status_code==200
+    assert client.delete('/api/v1/calificaciones/1/C1').status_code==409
+    assert client.get('/api/v1/calificaciones/1/C1').status_code==200
+    # Cancelled history does not prevent a fresh request using the same time.
+    q=post(client,'solicitudes',dict(id_estudiante=1,codigo_curso='C1',tema='Nuevo intento'))
+    post(client,'sesiones',{**setup['body'],'id_solicitud':q['id_solicitud']})
+
+
+def test_session_history_filters(client,setup):
+    s=post(client,'sesiones',setup['body'])
+    base='/api/v1/sesiones'
+    filters=dict(id_tutor=s['id_tutor'],id_estudiante=1,codigo_curso='C1',estado='programada',desde=setup['body']['inicio'],hasta=setup['body']['fin'])
+    assert client.get(base,query_string=filters).json['total']==1
+    assert client.get(base,query_string={**filters,'codigo_curso':'C2'}).json['total']==0
+    assert client.get(base,query_string={**filters,'desde':setup['body']['fin'],'hasta':(setup['base']+timedelta(hours=2)).isoformat()}).json['total']==0

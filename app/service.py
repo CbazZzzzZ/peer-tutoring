@@ -147,12 +147,13 @@ def validate_all():
         r=requests[s.id_solicitud]; tutor=tutors[s.id_tutor]
         expected={'programada':'asignada','completada':'cerrada','cancelada':'cancelada'}[s.estado]
         if r.estado!=expected:conflict('Estado de solicitud inconsistente.')
-        if s.estado=='cancelada':continue
         if r.id_estudiante==tutor.id_estudiante:conflict('Un tutor no puede atenderse a sí mismo.','AUTOTUTORIA')
         start,end=utc(s.inicio),utc(s.fin)
         certified=cert.get((s.id_tutor,r.codigo_curso))
         if not certified or certified>start.astimezone(timezone(timedelta(hours=-5))).date():
             conflict('El tutor no está habilitado para ese curso en esa fecha.','TUTOR_NO_HABILITADO')
+        # Cancelled sessions keep their certification history, but occupy no time.
+        if s.estado=='cancelada':continue
         if s.estado=='programada' and not any(a<=start and end<=b for a,b in available[s.id_tutor]):
             conflict('La sesión no está dentro de la disponibilidad del tutor.','SIN_DISPONIBILIDAD')
         if s.estado=='completada' and end>now():conflict('La sesión todavía no ha finalizado.')

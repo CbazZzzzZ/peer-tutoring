@@ -1,0 +1,31 @@
+{
+  "engine": "sqlite",
+  "sessions": 10000,
+  "evaluations": 10000,
+  "samples_per_report": 5,
+  "measurements": {
+    "demanda": {
+      "seconds": [
+        0.003084499971009791,
+        0.0017870999872684479,
+        0.0016614999622106552,
+        0.0016433000564575195,
+        0.001775900018401444
+      ],
+      "max_seconds": 0.003084499971009791,
+      "mean_seconds": 0.0019904599990695714
+    },
+    "desempeno": {
+      "seconds": [
+        0.009047699975781143,
+        0.009154399973340333,
+        0.008149400004185736,
+        0.006690099951811135,
+        0.006926799891516566
+      ],
+      "max_seconds": 0.009154399973340333,
+      "mean_seconds": 0.007993679959326982
+    }
+  },
+  "scope": "Flask test client, complete request and JSON, isolated synthetic database; not a load/concurrent-users benchmark"
+}

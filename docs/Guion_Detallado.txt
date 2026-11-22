@@ -1,0 +1,443 @@
+PDF 1 | Problema, objetivo y alcance
+Cómo usar este guion
+Este material acompaña el informe final de 18 páginas preparado el 21/11/2026. Las primeras 18 fichas corresponden a sus páginas; las seis siguientes amplían construcción, código, ejecución y defensa. No es necesario leer todo en voz alta. Estudia las explicaciones y utiliza el apartado Guion para presentar.
+
+Guion para decir
+«Peer Tutoring organiza tutorías entre estudiantes. Centraliza quién necesita ayuda, para qué curso, qué tutor puede atenderlo y en qué horario. Conserva sesiones y evaluaciones. El escenario inicial utiliza archivos y correos separados, lo que dificulta coordinar información. Es la motivación académica proporcionada en la primera entrega, no un diagnóstico institucional basado en entrevistas.»
+
+Cómo se construyó
+Se tomaron el documento inicial y la consigna como base. Se delimitó una tutoría individual: un estudiante, un tutor y un curso por sesión. Ese alcance determina las cardinalidades posteriores. Para una tutoría virtual se almacena un enlace en lugar; no se integra una plataforma de videollamadas.
+
+Alcance terminado
+Base relacional, operaciones CRUD, API, GUI, reportes, pruebas y documentación. No incluye pagos, matrícula oficial, tutorías grupales, cuentas por rol ni certificación automática. El operador registra habilitaciones; el sistema no consulta notas institucionales para concederlas.
+
+Qué defender
+El aporte es conservar información relacionada, validar horarios y consultar demanda y desempeño. No es solamente una lista de estudiantes: modela un proceso desde la solicitud hasta la evaluación.
+
+PDF 2 | Requisitos funcionales
+Guion para decir
+«Los requisitos funcionales describen acciones verificables: RF01 gestiona estudiantes; RF02, tutores y disponibilidad; RF03, cursos y habilitaciones; RF04, solicitudes; RF05, programación; RF06, cierre y cancelación; RF07, evaluaciones; RF08, historial; RF09, reportes; RF10, operación desde la interfaz.»
+
+Cómo se aplicó
+Cada entidad tiene un modelo en app/models.py y un recurso en RESOURCES. La API ofrece CRUD para las ocho entidades. La interfaz utiliza esos recursos y los reportes agregan consultas de lectura. La matriz de pruebas relaciona casos TC con requisitos RF para verificar la trazabilidad.
+
+Actores y usuarios reales
+Estudiante, tutor y oficina académica son actores del dominio. En esta versión un operador maneja todos los flujos. No hay una contraseña o un menú privado diferente para cada rol: no se implementó autenticación.
+
+Ajustes respecto a la primera entrega
+Se separó solicitud de sesión para conservar demanda no atendida. La disponibilidad se convirtió en filas con inicio y fin. Tutor referencia a estudiante para no repetir datos. Sesión obtiene estudiante y curso desde solicitud. Se incorporó GUI para cumplir la consigna final.
+
+Demostración
+En Estudiantes muestra crear, consultar y editar. En Solicitudes muestra Programar sobre una fila pendiente. En Sesiones muestra filtros por estudiante, tutor, curso, estado y periodo. Eliminar existe, pero las dependencias o el historial pueden impedirlo correctamente.
+
+PDF 3 | Reglas del negocio
+Guion para decir
+«Un requisito indica qué puede hacerse; una regla define cuándo es válido. El tutor debe ser distinto del solicitante, estar habilitado para el curso desde una fecha válida y tener disponibilidad. Ninguna de las dos personas puede estar en otra sesión al mismo tiempo.»
+
+RN01-RN05
+RN01: identidad y no autotutoría. RN02: habilitación y fecha. RN03: una sesión como máximo por solicitud. RN04: inicio anterior a fin y disponibilidad. RN05: no solapamientos, incluso entre roles; las sesiones canceladas liberan horario.
+
+RN06-RN09
+RN06: una evaluación después de completar y finalizar. RN07: estados sincronizados. RN08: dependencias e historial protegidos. RN09: cambios de disponibilidad y habilitación no invalidan sesiones; las habilitaciones usadas por el historial se conservan, incluso tras cancelar.
+
+Ejemplo y aplicación
+10:00-11:00 y 11:00-12:00 son contiguas. 10:30-11:30 se cruza con la primera. La notación [inicio, fin) incluye inicio y excluye fin. app/service.py comprueba reglas entre tablas dentro de la transacción; app/models.py añade claves y restricciones de base.
+
+No funcionales y supuestos
+Se usan JSON, fechas con zona, listas paginadas, respaldo y persistencia. La meta de reportes de dos segundos se midió en la página 12. Las escalas académica 0-10 y evaluación 1-5 son decisiones del prototipo. Los porcentajes de la consigna son exigencias, no porcentajes calculados sobre el código.
+
+PDF 4 | Modelo conceptual
+Guion para decir
+«Este modelo describe conceptos del problema. Estudiante representa a la persona; tutor, su rol de apoyo; solicitud, una necesidad; sesión, la atención concreta. Disponibilidad indica cuándo puede atender el tutor. Habilitación representa qué puede enseñar y retroalimentación es la evaluación posterior.»
+
+Relaciones R1-R4
+R1: un estudiante admite cero o un perfil tutor; cada tutor pertenece a un estudiante. R2: un estudiante admite muchas solicitudes. R3: un curso admite muchas solicitudes. R4: un tutor admite muchos intervalos de disponibilidad. Los dependientes siempre tienen un padre obligatorio.
+
+Relaciones R5-R9
+R5 y R6: cada habilitación une exactamente un tutor y un curso. R7: una solicitud admite cero o una sesión. R8: un tutor imparte muchas sesiones. R9: una sesión admite cero o una evaluación. Cero representa participación opcional, no un ID con valor cero.
+
+Por qué HABILITACION
+Un tutor puede enseñar varios cursos y un curso tener varios tutores. El concepto asociativo HABILITACION representa esa relación muchos a muchos y tiene fecha de certificación. En el modelo lógico se llama calificacion; no es la nota de una tutoría.
+
+Cómo se hizo y qué señalar
+Se identificaron conceptos y multiplicidades desde los requisitos y se dibujaron cajas y conectores vectoriales. Los códigos R permiten seguir cada relación hasta su leyenda. Los cruces sin punto no son uniones. No aparecen PK ni tipos porque esta vista describe el dominio. Señala que solicitud puede existir sin sesión, pero una sesión requiere solicitud y tutor.
+
+PDF 5 | Modelo lógico relacional
+Guion para decir
+«El modelo lógico convierte los conceptos en ocho tablas. PK identifica una fila; FK conecta con otra tabla; UQ impide duplicar. Las relaciones R1-R9 corresponden al modelo conceptual.»
+
+Claves de las primeras tablas
+Estudiante: id_estudiante y correo único. Tutor: id_tutor y FK única id_estudiante. Curso: codigo_curso como clave natural. Calificacion: PK compuesta por id_tutor y codigo_curso, ambos FK. Disponibilidad: id_disponibilidad y unicidad del conjunto tutor-inicio-fin.
+
+Claves del proceso
+Solicitud: id_solicitud y FK a estudiante y curso. Sesión: id_sesion, FK a tutor y FK única a solicitud. Retroalimentación: id_feedback y FK única a sesión. Las FK obligatorias impiden crear un hijo sin padre.
+
+Cómo se implementa cero o uno
+UNIQUE en tutor.id_estudiante evita dos perfiles para una persona. UNIQUE en sesion_tutoria.id_solicitud evita dos sesiones para una solicitud. UNIQUE en retroalimentacion.id_sesion evita dos evaluaciones. El padre puede existir sin hijo; por eso el mínimo es cero.
+
+Dónde está implementado
+app/models.py declara las columnas, tipos y restricciones. __tablename__ fija el nombre SQL. manage.py export genera docs/schema_postgresql.sql y docs/schema_sqlite.sql desde esos modelos. Se mantuvieron las ocho tablas en la revisión final; no se necesitó migrar el esquema.
+
+Pregunta probable
+¿Por qué sesión no guarda estudiante y curso? Se obtienen mediante id_solicitud. Repetirlos permitiría inconsistencias y crearía una dependencia transitiva dentro de sesión.
+
+PDF 6 | Normalización y diseño físico
+Guion para decir
+«La normalización organiza los datos según sus dependencias. X determina Y significa que un valor de X identifica un único valor de Y dentro de la relación. Una dependencia funcional no es necesariamente una clave foránea.»
+
+Primera forma normal
+Cada campo contiene un valor del dominio. No se guarda “Cálculo, Física, Bases” como lista en tutor: cada habilitación ocupa una fila. Los horarios también son filas con inicio y fin, no listas de texto. Así se pueden consultar y validar individualmente.
+
+Segunda forma normal
+fecha_certificacion depende del par completo tutor-curso. No solo del tutor: puede habilitarse para materias distintas en fechas diferentes. Nombre del curso no se guarda en calificacion porque dependería solamente de codigo_curso, parte de la clave compuesta.
+
+Tercera forma normal
+Nombre y correo pertenecen a estudiante; la descripción de la asignatura, a curso. Sesión referencia solicitud y consulta por JOIN su estudiante y curso. Bajo las dependencias declaradas no quedan esas dependencias transitivas de atributos no clave. La normalización evita anomalías al insertar, modificar y borrar.
+
+Claves candidatas y promedios
+Una clave candidata identifica mínimamente una fila y podría elegirse como primaria. Correo es candidata de estudiante; id_solicitud es candidata de sesión por UNIQUE y NOT NULL. El promedio académico del tutor es un dato declarado, mientras que el promedio de evaluaciones se calcula con AVG.
+
+Diseño físico
+PostgreSQL implementa INTEGER, VARCHAR, NUMERIC y TIMESTAMPTZ. Las FK usan ON DELETE RESTRICT. SQLAlchemy produce el DDL. create_all crea tablas ausentes, pero no transforma automáticamente un esquema anterior; un cambio futuro requiere migración explícita.
+
+PDF 7 | Transacciones, concurrencia y SQL
+Guion para decir
+«Programar es una operación indivisible: validar, insertar sesión y asignar la solicitud. Commit confirma todo; rollback deshace los cambios si falla la validación o la escritura.»
+
+Implementación
+resource_route en app/__init__.py llama a mutate y después a db.session.commit. Las excepciones provocan rollback. PostgreSQL utiliza SERIALIZABLE; SQLite usa BEGIN IMMEDIATE en escrituras. Los conflictos se reintentan hasta un límite y, si no se resuelven, devuelven 409.
+
+Por qué no basta consultar horario
+Dos peticiones pueden leer el mismo horario libre antes de que una termine. El aislamiento y el reintento atienden ese conflicto. La prueba concurrente espera una reserva confirmada y otra rechazada; desactivar un botón en la GUI no sustituye esta protección.
+
+Consultas de reportes
+LEFT JOIN conserva cursos sin solicitudes y tutores sin sesiones. COUNT(id) cuenta filas relacionadas y no la fila vacía de una unión. GROUP BY agrupa por curso o tutor. AVG calcula promedio de puntuaciones no nulas. ORDER BY ordena. Los filtros temporales están en la condición de unión para conservar padres sin coincidencias.
+
+Periodos e índices
+[desde, hasta) incluye inicio y excluye fin. Demanda cuenta solicitudes incluso canceladas; desempeño considera sesiones completadas por fecha de fin. Un índice ayuda a localizar datos y añade costo a escrituras. No se afirma haber medido cada índice con EXPLAIN ANALYZE.
+
+Ejemplo para defender
+«Si ocurre un fallo antes de confirmar, no queda una solicitud asignada sin sesión. Todo se revierte. Los parámetros de las consultas se enlazan mediante SQLAlchemy, no se concatenan como texto SQL.»
+
+PDF 8 | API: contrato e implementación
+Guion para decir
+«La API está implementada en Python con Flask, en app/__init__.py. Recibe peticiones HTTP y devuelve JSON. /api/v1 identifica la versión. La interfaz y Postman pueden usar el mismo contrato.»
+
+Operaciones
+GET /api/v1/estudiantes lista; POST crea. GET /api/v1/estudiantes/1 consulta uno; PATCH modifica campos; DELETE intenta eliminarlo si las reglas permiten. Calificaciones necesita dos partes en la dirección: /api/v1/calificaciones/1/C1, porque la clave es compuesta.
+
+Recorrido por el código
+create_app configura Flask y SQLAlchemy. identify convierte recurso y clave en modelo. resource_route distribuye métodos HTTP. list_records filtra y pagina. mutate, en service.py, valida y modifica. serialize convierte fechas y decimales a formatos JSON. reports construye consultas agregadas.
+
+Códigos y errores
+200: consulta o actualización correcta. 201: creado. 204: eliminado sin cuerpo. 400: entrada inválida. 404: no existe. 409: duplicado, dependencia o conflicto. error.codigo identifica el problema y error.mensaje contiene la explicación que muestra la GUI.
+
+Cómo demostrar
+Con la aplicación encendida, abre http://127.0.0.1:5055/api/v1/estudiantes y muestra JSON. /docs muestra documentación; /openapi.json contiene el contrato importable en Postman. La barra del navegador sirve para GET; usa GUI o Postman para POST y PATCH.
+
+Qué es Flask-SQLAlchemy
+Integra Flask con el ORM SQLAlchemy. Las clases Python representan tablas y las operaciones se traducen a SQL. PostgreSQL es el motor que almacena y consulta. El JSON de ejemplo de la página no crea datos hasta que un cliente envíe la petición.
+
+PDF 9 | Interfaz gráfica e integración
+Guion para decir
+«La interfaz está hecha con HTML, CSS y JavaScript, servida por Flask. No utiliza React ni Django. index.html contiene la estructura, style.css define el aspecto y app.js implementa navegación, formularios y peticiones.»
+
+Cómo se creó
+Se construyeron navegación, tarjetas de resumen, tablas, formularios en un diálogo y reportes. JavaScript recibe metadatos de /api/v1/meta para identificar campos, referencias y claves. Así reutiliza formularios entre entidades en vez de mantener ocho implementaciones independientes.
+
+Cómo se conecta
+fetch envía HTTP con Content-Type application/json. JSON.stringify convierte el objeto en texto JSON. La API valida, ejecuta la operación y responde. JavaScript actualiza la tabla o conserva el formulario con el error. El navegador nunca escribe directamente en PostgreSQL.
+
+Mejoras finales
+Filtros de historial, botón Programar en solicitudes pendientes, solicitud precargada, tutores filtrados por curso y fecha, y evaluaciones limitadas a sesiones completadas sin evaluación. La solicitud de una sesión no se puede cambiar en edición. Disponibilidad y cruces se validan en el servidor al guardar; no se promete asignación automática de horarios.
+
+Docker y repositorio
+compose.yaml define web, db y volumen peer_data. Docker ejecuta servicios; GitHub conserva código e historial. El repositorio privado no es una dirección pública de la aplicación. Autenticación institucional, notificaciones y tutorías grupales son ampliaciones futuras, no funciones ya implementadas.
+
+PDF 10 | Casos de aceptación TC01-TC11
+Guion para decir
+«Cada prueba tiene preparación, acción y resultado esperado. La matriz relaciona los casos TC con los requisitos RF. También se prueba que las operaciones inválidas fallen correctamente.»
+
+Qué verifica cada caso
+TC01 crea, consulta y modifica estudiante. TC02 rechaza correo repetido. TC03 rechaza segundo perfil tutor. TC04 rechaza habilitación duplicada. TC05 rechaza referencias inexistentes. TC06 programa una sesión válida y asigna solicitud. TC07 rechaza tutor no habilitado. TC08 rechaza horario fuera de disponibilidad. TC09 rechaza fin igual o anterior a inicio. TC10 rechaza cruces y acepta contiguas válidas. TC11 rechaza autotutoría.
+
+Cómo se construyeron
+tests/test_api.py utiliza pytest y el cliente de pruebas Flask. Las fixtures preparan estudiantes, tutores, cursos y horarios en una base aislada. El auxiliar post envía JSON y comprueba el código HTTP. Las aserciones también consultan lo que quedó guardado, no solo el mensaje.
+
+Ejemplo oral
+«Se crea una solicitud de C2 y se intenta asignar un tutor habilitado solo para C1. Espero 409, cero sesiones insertadas y solicitud pendiente. Esto comprueba tanto el rechazo como la ausencia de cambios parciales.»
+
+Fechas e independencia
+Las fechas de la tabla son ilustrativas. Las pruebas calculan fechas respecto a su ejecución. Cada escenario reconstruye su base para evitar depender de otro caso. La base PostgreSQL de prueba se llama exactamente peer_tutoring_test; no se borra la base de demostración.
+
+PDF 11 | Casos de aceptación TC12-TC23
+Guion para decir
+«La segunda parte comprueba historial, operaciones simultáneas, evaluaciones, reportes e interfaz. No basta con que un formulario guarde: los datos deben seguir siendo consistentes.»
+
+Agenda y evaluación
+TC12 impide sesiones simultáneas para una persona, incluso cambiando de tutor o rol. TC13 lanza reservas simultáneas. TC14 impide completar antes del fin. TC15 exige sesión completada y evaluación única. TC16 rechaza puntuaciones 0 y 6.
+
+Eliminación y reportes
+TC17 permite borrar registros aislados y bloquea dependencias; borrar sesión programada devuelve solicitud a pendiente. TC18 cancela sin reabrir estados terminales. TC19 verifica conteos y promedios conocidos. TC20 comprueba periodos vacíos y límites desde/hasta.
+
+GUI, rollback y volumen
+TC21 revisa operaciones visibles, persistencia, errores y móvil. TC22 comprueba cambios que invalidan sesiones y fuerza un fallo antes del commit. TC23 mide reportes con diez mil sesiones y verifica restauración.
+
+No confundir cantidades
+La matriz conserva 23 criterios de aceptación. La suite final tiene 19 escenarios automatizados; algunos agrupan varias verificaciones. Las comprobaciones interactivas del navegador y el respaldo se documentan aparte. No se deben presentar como 23 pruebas automatizadas independientes.
+
+Ampliación final
+Se añadieron dos escenarios: conservar la habilitación usada por una sesión cancelada y verificar filtros combinados del historial. Comprueban las correcciones que se hicieron al contrastar documento y aplicación.
+
+PDF 12 | Evidencia y rendimiento
+Guion para decir
+«Las páginas anteriores definen lo esperado. Aquí se muestra lo ejecutado: 19 escenarios aprobados en PostgreSQL y 19 en SQLite, sin fallos ni omisiones, el 21 de noviembre.»
+
+Primera tabla
+Los tiempos corresponden a toda la suite: aproximadamente 8,74 segundos en PostgreSQL y 10,03 en SQLite. No son tiempos de abrir una pantalla. Los valores exactos están en junit_postgresql_final.xml y junit_sqlite_final.xml.
+
+Medición con volumen
+Se cargaron diez mil sesiones completadas y diez mil evaluaciones. Se hicieron cinco peticiones por reporte con el cliente Flask, incluyendo JSON. Se verificaron cinco mil solicitudes por cada uno de dos cursos y promedio 4,00. El máximo de desempeño PostgreSQL fue aproximadamente 0,0252 segundos, menor a la meta de dos segundos.
+
+Límites de la medición
+No mide Internet, representación visual ni muchos usuarios simultáneos. No permite concluir que SQLite siempre sea más rápido. La validación de agenda completa prioriza claridad e integridad en el prototipo; no se afirma optimización para cualquier escala.
+
+Respaldo y GUI
+pg_dump creó una copia; pg_restore la restauró en peer_tutoring_restore. Se compararon todos los valores de las ocho tablas. La revisión final de navegador incluyó filtros, reserva, edición, rechazo de cierre futuro, cierre pasado, evaluación, reportes y móvil.
+
+Archivos de evidencia
+En docs están junit_*_final.xml, performance_*_final.json, backup_postgresql_final.json, validacion_gui_final.json y capturas 07-09. El archivo de GUI identifica revisión interactiva, no una suite automatizada. Las evidencias anteriores conservan sus propias fechas.
+
+PDF 13 | Prototipo y ejecución
+Guion para decir
+«Estas capturas muestran el prototipo conectado a PostgreSQL. La primera presenta sesiones filtradas por curso; la segunda, reportes calculados desde los datos. El programa funcional se demuestra en el navegador, no dentro del PDF.»
+
+Dónde está
+El paquete contiene la carpeta modelo_funcional, o Peer_Tutoring al descomprimir el ZIP. Abre Docker Desktop, espera que el motor funcione y ejecuta INICIAR_DOCKER.bat. La aplicación se visita en http://127.0.0.1:5055.
+
+Qué hace el inicio
+docker compose up construye y levanta web y db. --wait espera servicios. manage.py seed carga datos ficticios si la base no tiene estudiantes. No reemplaza datos de una base ya utilizada. En una instalación nueva calcula fechas relativas, por eso no debes memorizar IDs ni fechas de las capturas.
+
+Dirección y servicios
+127.0.0.1 identifica el propio equipo. El puerto 5055 se dirige al 5000 del servicio web. PostgreSQL funciona en otro servicio llamado db dentro de la red Docker. La base no está expuesta directamente al navegador.
+
+Persistencia y alternativa
+El volumen peer_data conserva registros al detener contenedores. No utilizar down -v si deseas conservar datos. INICIAR.bat usa la alternativa SQLite, cuyo archivo es instance/peer_tutoring.db. No ejecutes ambas variantes al mismo tiempo en el puerto 5055.
+
+Tres vistas distintas
+El prototipo es la interfaz. /docs es documentación. /api/v1/estudiantes devuelve JSON. GitHub conserva el código; no mantiene encendido este servidor local ni permite al profesor abrir la URL local desde su equipo.
+
+PDF 14 | Alcance, IA y referencias
+Guion para decir
+«El disclaimer aclara que es un prototipo académico local con datos ficticios. No se presenta como un sistema institucional aprobado ni como un despliegue con cuentas individuales.»
+
+Declaración de asistencia
+«Aporté la primera entrega, las consignas y las observaciones del docente. Utilicé ChatGPT como apoyo para implementar API e interfaz, y para revisar diseño, documentación y pruebas. La revisión, comprensión y presentación me corresponden.»
+
+Por qué se distingue así
+La declaración reconoce tus materiales de partida y las tareas asistidas. No atribuye a la IA todo el origen del proyecto, pero tampoco limita su participación a dos componentes cuando también intervino en diagramas, documento y verificaciones. No se afirma una revisión humana que aún no se haya realizado.
+
+Fuentes
+La primera referencia es la especificación inicial del integrante. La segunda reúne consignas académicas. Las referencias técnicas describen restricciones de PostgreSQL e integración Flask-SQLAlchemy. Las fuentes respaldan conceptos; la evidencia del funcionamiento procede de ejecuciones locales.
+
+Cómo responder por límites
+Autenticación por roles e integración institucional son ampliaciones para uso real. La entrega se preparó el 21/11 y el hito final de la consigna es el 23/11. Tener el archivo terminado no significa haberlo subido a EVA ni haber recibido aprobación. Estudia y explica solamente lo que hayas comprendido.
+
+PDF 15 | Diccionario: identidad y catálogo
+Guion para decir
+«El diccionario especifica cada campo: nombre, tipo, restricción y significado. Complementa el modelo lógico, que resume relaciones y claves.»
+
+Estudiante
+id_estudiante es INTEGER autogenerado. nombre es VARCHAR(120), obligatorio y no vacío. correo es VARCHAR(254), obligatorio, único y normalizado a minúsculas. carrera es VARCHAR(120). anio_ingreso es SMALLINT entre 2000 y 2100. La API valida formato de correo y textos vacíos.
+
+Tutor
+id_tutor identifica el perfil. id_estudiante es FK obligatoria y única. promedio es NUMERIC(4,2): cuatro dígitos totales y dos decimales, restringido a 0-10. Es promedio académico declarado, no satisfacción ni una consulta a notas oficiales.
+
+Curso
+codigo_curso es VARCHAR(20) y clave natural. nombre_curso y departamento son textos obligatorios. creditos es un entero pequeño positivo. No hace falta una tabla departamento si únicamente se guarda su nombre y no se manejan otros atributos o reglas de ese concepto.
+
+Restricciones
+NOT NULL impide ausencia, pero no equivale a impedir una cadena vacía. UNIQUE impide duplicados; PK identifica; FK relaciona; CHECK condiciona valores. SERIAL en PostgreSQL representa generación mediante secuencia. El código natural de curso lo introduce el operador.
+
+Pregunta probable
+¿Por qué identificadores y no nombres como referencias? Un nombre puede cambiar o repetirse. El ID mantiene estable la relación al corregir datos. Normalizar el correo a minúsculas evita que variaciones de mayúsculas permitan duplicarlo.
+
+PDF 16 | Diccionario: habilitación y solicitud
+Guion para decir
+«Estas tablas indican qué puede enseñar el tutor, cuándo puede atender y qué necesita el estudiante.»
+
+Calificacion
+id_tutor y codigo_curso forman juntos la PK y son FK. fecha_certificacion es DATE obligatoria. El par se registra una vez. No guarda múltiples renovaciones históricas de la certificación; esa función requeriría ampliar el modelo.
+
+Disponibilidad
+id_disponibilidad identifica la fila; id_tutor señala el dueño. inicio y fin son obligatorios, con fin posterior. UNIQUE(tutor,inicio,fin) impide repetir exactamente el mismo intervalo; no prohíbe por sí solo todos los intervalos de disponibilidad solapados. Una sesión debe caber completa en al menos uno de los intervalos.
+
+Solicitud
+id_solicitud identifica la necesidad. id_estudiante y codigo_curso son FK. fecha_solicitud la asigna el servidor mediante el ORM. tema describe la ayuda y estado comienza pendiente. Al programar pasa a asignada; al completar, cerrada; al cancelar su sesión, cancelada.
+
+Fechas y predeterminados
+DATE guarda día sin hora. TIMESTAMPTZ representa instantes con manejo de zona; no conserva necesariamente el nombre original de la zona. La API normaliza y la GUI presenta Ecuador. Ahora en el diccionario es un valor generado por el ORM, no un DEFAULT SQL para cualquier inserción externa.
+
+Nuevo intento
+Una solicitud con sesión cancelada no se reutiliza para otra atención: se crea una nueva solicitud. La decisión conserva el historial y mantiene la relación máxima de una sesión por solicitud.
+
+PDF 17 | Diccionario: sesión y evaluación
+Guion para decir
+«Sesión representa la atención concreta; retroalimentación, la evaluación posterior. Las referencias únicas limitan la cantidad de registros relacionados.»
+
+Sesión
+id_sesion es autogenerado. id_solicitud es FK obligatoria y única. id_tutor es FK obligatoria. inicio y fin definen el intervalo. lugar es aula o enlace. estado es programada, completada o cancelada. Las sesiones terminales no se reabren ni cambian de solicitud.
+
+Retroalimentación
+id_feedback identifica la evaluación; id_sesion es FK única. calificacion es SMALLINT de 1 a 5. comentarios es opcional y la API limita su longitud a 5000. fecha se asigna desde el servidor. El CRUD permite corregir o eliminar una evaluación; la sesión histórica sigue protegida.
+
+Controles complementarios
+CHECK controla puntuación, UNIQUE impide otra evaluación y FK exige sesión existente. El servicio exige sesión completada, hora final pasada y fecha de evaluación no anterior a fin. Un CHECK simple no reemplaza la comprobación del estado de otra tabla.
+
+Identidad y lectura
+Las PK no se modifican. Tutor no cambia de estudiante; evaluación no cambia de sesión; sesión no cambia de solicitud. Se puede modificar un lugar en sesión programada o un comentario. Los nombres visibles se obtienen relacionando tablas o consultando catálogos; mostrarlos no significa duplicarlos en la fila de sesión.
+
+Ejemplo
+Una sesión futura puede aparecer en agenda, pero no se evalúa. Después de su hora final debe marcarse completada. Solo entonces estará disponible para una nueva evaluación, siempre que no tenga una ya registrada.
+
+PDF 18 | Convenciones y consistencia
+Guion para decir
+«Las convenciones mantienen consistentes diagramas, esquema, código y API. Las tablas usan singular, minúsculas y snake_case, como solicitud_tutoria. Las clases usan PascalCase, como SolicitudTutoria. Las rutas usan plural, como /api/v1/solicitudes.»
+
+Ejemplos aplicados
+id_solicitud conserva nombre y tipo al ser FK. Los índices explícitos empiezan por idx_. Los estados son valores exactos en minúsculas. Las fechas API usan ISO 8601 con zona: 2026-11-23T10:00:00-05:00. Los casos se identifican TC01, TC02 y se relacionan con RF.
+
+Términos que no debes confundir
+calificacion se conserva por continuidad con la primera entrega y significa habilitación. retroalimentacion.calificacion significa puntuación. id_feedback es una excepción heredada al vocabulario español. El promedio académico no es el promedio de evaluaciones. La GUI muestra Habilitaciones y Evaluaciones para distinguirlos.
+
+Mantener el contrato
+Cambiar una columna exige revisar modelo, SQL, API, GUI, diccionario y pruebas. Cambiar cardinalidad exige revisar UNIQUE, FK y reglas. Los nombres automáticos de restricciones de PostgreSQL no deben convertirse en mensajes de usuario que dependan de una cadena fija.
+
+Cierre sugerido
+«El proyecto conecta requisitos, modelos, API, interfaz y pruebas. La aplicación guarda datos relacionados, valida operaciones y genera reportes. La demostración permite comprobar cómo las decisiones del documento funcionan en un sistema real dentro del alcance académico.»
+
+Antes de exponer
+Practica las páginas 4-8: multiplicidades, claves, normalización, transacciones y API. Las fichas siguientes explican archivos, construcción, ejecución y demostración para defender decisiones sin memorizar todo el código.
+
+Práctica 1 | Construcción y mapa del código
+Proceso de construcción
+1. Interpretar documento inicial y consigna. 2. Definir entidades, claves y reglas. 3. Declarar modelos ORM y exportar SQL. 4. Implementar servicio y API. 5. Conectar formularios y reportes. 6. Probar casos válidos, conflictos, rendimiento y respaldo. 7. Contrastar diagramas y texto con la implementación.
+
+Servidor
+app/models.py: clases db.Model, columnas y restricciones. app/service.py: Problem representa errores esperados; clean convierte y valida entradas; mutate aplica CRUD y estados; validate_all revisa agenda y relaciones. app/__init__.py: create_app configura; resource_route recibe operaciones; reports calcula reportes; metadata y api_spec describen campos y contrato.
+
+Navegador
+app/templates/index.html define estructura. app/static/style.css define aspecto, foco, tablas y móvil. app/static/app.js genera formularios, envía peticiones y actualiza resultados. app/templates/docs.html muestra documentación. Son HTML, CSS y JavaScript propios, sin React.
+
+Entorno
+manage.py init crea tablas; seed carga ejemplos; export genera SQL y OpenAPI. Dockerfile instala requirements.txt y ejecuta Gunicorn con Flask. compose.yaml configura PostgreSQL, web y volumen. run.py usa Waitress para el inicio local alternativo. tests/test_api.py reúne la suite pytest.
+
+Qué cambió en la revisión final
+Se conservó el esquema de ocho tablas. Se corrigió la conservación de habilitaciones de sesiones canceladas, se añadieron filtros y selección guiada, se agregaron pruebas y se redibujaron modelos con leyenda R1-R9. Se actualizó evidencia y se preparó este guion.
+
+Límites
+No envía correos, no realiza videollamadas, no consulta notas oficiales ni autentica estudiantes. Una entrega completa dentro del alcance del prototipo no implica que esas ampliaciones estén implementadas.
+
+Práctica 2 | Una reserva de extremo a extremo
+Ejemplo
+Ana solicita Física I. Luis tiene perfil, habilitación para Física I y disponibilidad de 09:00 a 12:00. El operador programa de 10:00 a 11:00 en Biblioteca.
+
+1. Navegador
+Se registra solicitud con estudiante, curso y tema. Programar abre Sesiones con solicitud precargada. El selector de tutor usa curso y fecha de certificación y excluye al propio solicitante. El operador completa inicio, fin y lugar.
+
+2. Petición
+JavaScript envía POST /api/v1/sesiones con id_solicitud, id_tutor, inicio, fin y lugar en JSON. No envía id_sesion porque se genera al guardar. Las fechas incluyen zona horaria y los IDs deben existir.
+
+3. Servicio
+resource_route identifica el modelo. clean rechaza campos desconocidos, tipos inválidos o referencias inexistentes. mutate exige solicitud pendiente y crea la sesión programada. Actualiza solicitud a asignada y ejecuta flush dentro de la transacción. Flush envía SQL pendiente, pero todavía no confirma definitivamente.
+
+4. Integridad y respuesta
+validate_all revisa identidad, habilitación, disponibilidad, estados y cruces. Commit confirma todo; rollback evita cambios parciales si falla. La API devuelve 201 con la sesión o un error. La GUI actualiza listas o conserva el formulario y muestra el motivo.
+
+5. Cierre
+PATCH de estado completada es válido después de fin y cierra la solicitud. Entonces puede crearse retroalimentación. Cancelar libera horario pero conserva historial y cancela la solicitud. Una sesión cancelada no se reutiliza.
+
+Idea que debes recordar
+Cada botón conecta cuatro niveles: acción visual, petición HTTP, validación transaccional y persistencia. Recargar consulta de nuevo la base; por eso el registro permanece.
+
+Práctica 3 | Cómo se implementó la GUI
+HTML
+aside contiene navegación; main, contenido; header, enlaces; dialog, formularios. Los identificadores permiten a JavaScript encontrar cada zona. Las etiquetas describen campos y status/alert presentan resultados y errores.
+
+CSS
+Variables definen colores. Grid organiza tarjetas y campos; Flex organiza acciones. Las media queries ajustan columnas y convierten navegación lateral en una fila desplazable en móvil. Las tablas se desplazan dentro de su contenedor sin ensanchar el documento.
+
+JavaScript
+navigate cambia pantalla; refreshLookups carga catálogos; list consulta filas paginadas; edit construye formulario; remove confirma y borra; refreshFormChoices limita referencias; filterControls y bindFilters aplican filtros; dashboard consulta resumen; runReports presenta demanda y desempeño.
+
+Metadatos
+/api/v1/meta devuelve nombre, tipo, obligatoriedad, PK, referencia y valor predeterminado. La GUI omite IDs automáticos y fechas asignadas por servidor. Genera selects para FK y campos de número o fecha según tipo. Los catálogos permiten mostrar nombres en vez de exigir recordar IDs.
+
+Comunicación y seguridad de presentación
+fetch envía JSON y recibe JSON. La función api maneja códigos de error; 204 no tiene cuerpo para interpretar. esc convierte caracteres especiales antes de mostrarlos como HTML. Guardar se desactiva durante la petición para reducir envíos repetidos. La API vuelve a validar incluso si el navegador validó.
+
+Por qué validar otra vez
+Un formulario puede quedar abierto mientras otra operación reserva el horario. El selector ayuda, pero no garantiza disponibilidad al confirmar. La decisión final se toma en el servidor. No existe autenticación ni separación de permisos por rol.
+
+Práctica 4 | Instalación y operación
+Con Docker
+Descomprime el paquete en una carpeta propia. Abre Docker Desktop y espera el motor. Ejecuta INICIAR_DOCKER.bat. La primera vez descarga imágenes y dependencias, por lo que requiere Internet. Abre http://127.0.0.1:5055. /docs y /openapi.json pertenecen a ese mismo servidor.
+
+Carga inicial
+seed se omite si ya hay estudiantes: no restablece tu trabajo. Crea disponibilidad relativa al día de primera carga; si presentas semanas después, añade horarios. Los datos locales de verificación pueden diferir de una instalación nueva. No memorices IDs de capturas.
+
+Alternativa SQLite
+Con Python 3.12 o superior y el lanzador py, ejecuta INICIAR.bat. Crea entorno e instala requirements.txt. La base queda en instance/peer_tutoring.db y run.py utiliza Waitress. Mantén abierta esa ventana. Detén Docker si ya ocupa 5055.
+
+Pruebas
+PROBAR_DOCKER.bat ejecuta pytest en peer_tutoring_test, separada de peer_tutoring. Las pruebas SQLite usan bases temporales. Para lectura abre /health y /api/v1/estudiantes. Para escrituras usa GUI o Postman importando docs/openapi.json.
+
+Respaldo y parada
+El procedimiento probado usa pg_dump custom y pg_restore en otra base, nunca sobre la demostración. docker compose down conserva el volumen; no añadas -v si quieres conservar datos. GitHub excluye las bases reales y no reemplaza un respaldo.
+
+Si algo falla
+Comprueba Docker, mensajes de inicio y puerto. Ante rechazo de horario revisa habilitación, fecha, disponibilidad y cruces. Ante reporte vacío revisa desde/hasta. Hasta es exclusivo. Un 409 puede ser la respuesta correcta a una regla, no un error técnico del programa.
+
+Práctica 5 | Demostración de 8-10 minutos
+Preparación
+Abre Docker antes de exponer. Ten informe, prototipo y /docs disponibles. Revisa un tutor, su curso y disponibilidad. Para cerrar durante la demostración usa una sesión que ya terminó; una futura se rechazará correctamente.
+
+Minutos 0-2: diseño
+Explica objetivo y alcance. Muestra conceptual y lógico. Señala estudiante-tutor, habilitación muchos a muchos y separación solicitud-sesión. Define PK, FK y UNIQUE con ejemplos.
+
+Minutos 2-4: CRUD
+Crea estudiante ficticio con correo nuevo, consulta y modifica carrera. Intenta repetir el correo para mostrar conflicto. Para DELETE usa un registro de demostración sin solicitudes ni perfil tutor. El borrado con dependencias debe rechazarse.
+
+Minutos 4-6: programación
+Crea solicitud para curso habilitado. Pulsa Programar, elige tutor y horario permitido. Verifica solicitud asignada y sesión programada. Crea otra solicitud e intenta ocupar el mismo horario para demostrar rechazo.
+
+Minutos 6-8: evaluación y reportes
+Completa una sesión pasada sin evaluación y evalúala. Consulta reportes con periodo que incluya registros. Explica demanda por fecha de solicitud y desempeño por fin de sesión. Sin evaluaciones es ausencia de datos, no cero.
+
+Minutos 8-10: evidencia
+Abre /api/v1/estudiantes y muestra JSON; abre /docs y explica métodos. Señala __init__.py, service.py y models.py. Muestra 19 escenarios aprobados por motor, respaldo y mediciones. Cierra con límites y mejoras futuras.
+
+Evita estos errores
+No prometas que la URL local abre en el equipo del profesor sin ejecutar el proyecto. No afirmes que todas las operaciones deben aceptarse. No confundas calificacion con puntuación ni promedio académico con promedio del reporte. El profesor necesitará acceso al repositorio mientras siga privado.
+
+Práctica 6 | Preguntas para defender decisiones
+¿Por qué relacional y PostgreSQL?
+Existen entidades y relaciones con restricciones claras. FK, unicidad y transacciones permiten consistencia. PostgreSQL aporta control de concurrencia; SQLite es una alternativa sencilla en un archivo. No son bases sincronizadas: la configuración selecciona un motor.
+
+¿Por qué solicitud y sesión separadas?
+Una necesidad puede existir sin ser atendida. Si solo hubiera sesiones se perdería demanda pendiente. Solicitud contiene estudiante y curso; sesión añade tutor, horario y lugar. Se permite una sesión por solicitud, no varios intentos en la misma.
+
+¿Cómo justificas 3FN?
+id_estudiante determina datos personales; codigo_curso determina descripción; el par tutor-curso determina certificación. No se repiten nombres en sesión ni atributos que dependan de parte de la clave compuesta. La conclusión depende de las reglas declaradas, no de crear una tabla por cada palabra.
+
+¿Quién valida y quién ejecuta SQL?
+La GUI hace comprobaciones iniciales; service.py aplica reglas; los modelos declaran restricciones que la base hace cumplir. SQLAlchemy construye SQL; PostgreSQL lo ejecuta. La API no almacena los datos en el navegador.
+
+¿Qué protege una transacción?
+Sesión y solicitud se confirman juntas o se revierten. Aislamiento y reintentos atienden conflictos simultáneos. No es solamente desactivar Guardar. La prueba de rollback demuestra ausencia de escritura parcial.
+
+¿Qué queda fuera y qué aportó la asistencia?
+Para uso institucional faltan autenticación por roles y validación institucional. El integrante aportó materiales iniciales y consignas; la asistencia apoyó API, GUI y revisión de diseño, documento y pruebas. Explica con tus palabras y reconoce cuando necesitas revisar un detalle.
+
+Dónde buscar
+Modelo: PDF 4-6 y models.py. Reglas: PDF 3 y 7, service.py. API: PDF 8, __init__.py, /docs. GUI: PDF 9 y 13, templates y static. Evidencia: PDF 10-12 y docs. Tipos: PDF 15-18. Este guion acompaña la versión final de 18 páginas.

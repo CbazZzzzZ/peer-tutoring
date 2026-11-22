@@ -1,0 +1,48 @@
+{
+  "engine": "postgresql",
+  "method": "pg_dump custom + pg_restore into separate database",
+  "tables": {
+    "curso": {
+      "original": 3,
+      "restored": 3,
+      "all_values_equal": true
+    },
+    "estudiante": {
+      "original": 4,
+      "restored": 4,
+      "all_values_equal": true
+    },
+    "solicitud_tutoria": {
+      "original": 5,
+      "restored": 5,
+      "all_values_equal": true
+    },
+    "tutor": {
+      "original": 2,
+      "restored": 2,
+      "all_values_equal": true
+    },
+    "calificacion": {
+      "original": 6,
+      "restored": 6,
+      "all_values_equal": true
+    },
+    "disponibilidad": {
+      "original": 28,
+      "restored": 28,
+      "all_values_equal": true
+    },
+    "sesion_tutoria": {
+      "original": 5,
+      "restored": 5,
+      "all_values_equal": true
+    },
+    "retroalimentacion": {
+      "original": 3,
+      "restored": 3,
+      "all_values_equal": true
+    }
+  },
+  "unvalidated_constraints": 0,
+  "status": "passed"
+}

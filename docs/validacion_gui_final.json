@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-21",
+  "engine": "postgresql",
+  "method": "Revisión interactiva de navegador; no suite automatizada",
+  "checks": [
+    {
+      "name": "Filtro de solicitudes por estado pendiente",
+      "status": "passed"
+    },
+    {
+      "name": "Botón Programar precarga solicitud",
+      "status": "passed"
+    },
+    {
+      "name": "Selector de tutores por curso y exclusión de autotutoría",
+      "status": "passed"
+    },
+    {
+      "name": "Creación de sesión 23/11/2026 10:00-11:00 desde GUI",
+      "status": "passed"
+    },
+    {
+      "name": "Solicitud asignada después de programar",
+      "status": "passed"
+    },
+    {
+      "name": "Edición con solicitud bloqueada y valor conservado",
+      "status": "passed"
+    },
+    {
+      "name": "Rechazo de cierre futuro; formulario conserva datos",
+      "status": "passed"
+    },
+    {
+      "name": "Cambio de lugar confirmado",
+      "status": "passed"
+    },
+    {
+      "name": "Filtro de sesiones por curso Física I devuelve dos filas",
+      "status": "passed"
+    },
+    {
+      "name": "Evaluación nueva excluye sesiones ya evaluadas",
+      "status": "passed"
+    },
+    {
+      "name": "Cierre de sesión pasada desde GUI",
+      "status": "passed"
+    },
+    {
+      "name": "Selector de evaluación ofrece solo la sesión completada no evaluada",
+      "status": "passed"
+    },
+    {
+      "name": "Creación de puntuación 5 y comentario",
+      "status": "passed"
+    },
+    {
+      "name": "Reporte muestra Luis: 2 completadas, 2 evaluadas, promedio 5",
+      "status": "passed"
+    },
+    {
+      "name": "Vista móvil 375 px sin desbordamiento horizontal del documento",
+      "status": "passed"
+    },
+    {
+      "name": "Sin errores de consola registrados",
+      "status": "passed"
+    }
+  ],
+  "screenshots": [
+    "07_final_sesiones.jpg",
+    "08_final_reportes.jpg",
+    "09_final_movil.jpg"
+  ]
+}
